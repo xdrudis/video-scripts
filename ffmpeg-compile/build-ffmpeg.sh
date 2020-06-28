@@ -76,7 +76,7 @@ fi
 DIR=$TMPDIR/libass; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz | tar xz --strip-components=1
 ./autogen.sh
-./configure --prefix="$PREFIX" --disable-static --enable-shared
+./configure --prefix="$PREFIX" --disable-static --enable-shared --disable-require-system-font-provider
 make -j$njobs
 $sudo make install
 rm -fR "$DIR"
