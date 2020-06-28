@@ -18,7 +18,7 @@ cd $TMPDIR
 
 curl -sLO https://media.xiph.org/video/derf/y4m/akiyo_qcif.y4m
 
-export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$PREFIX/lib:${LD_LIBRARY_PATH:-}
 
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m output.mp4
 
