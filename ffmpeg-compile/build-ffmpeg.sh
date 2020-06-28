@@ -3,6 +3,7 @@
 #
 # Portable script to compile ffmpeg, with vmaf support (x86_64 only)
 # Requires no root access, making it easy for multiple environments to coexist.
+# Inspired by https://github.com/jrottenberg/ffmpeg, but not focused on containers.
 #
 # Usage: ./build-ffmpeg.sh
 #
@@ -34,6 +35,7 @@ LIBOPUS_VERSION=1.3.1             # https://archive.mozilla.org/pub/opus/
 OPENJPEG_VERSION=2.3.1            # https://github.com/uclouvain/openjpeg/releases
 LIBVPX_VERSION=de4aeda            # git commit, as latest version v1.8.2 fail to build on macOs https://github.com/webmproject/libvpx/releases
 LIBWEBP_VERSION=1.1.0             # https://github.com/webmproject/libwebp/releases
+LIBASS_VERSION=0.13.7             # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=9.1.23.1 # https://github.com/FFmpeg/nv-codec-headers/releases
 PATH="${PREFIX}/bin:$PATH"
 
@@ -69,7 +71,18 @@ else
 fi
 
 #
-# fdk-aac https://github.com/mstorsjo/fdk-aac
+# libass
+#
+DIR=$TMPDIR/libass; mkdir -p "$DIR"; cd "$DIR"
+curl -sL https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz | tar xz --strip-components=1
+./autogen.sh
+./configure --prefix="$PREFIX" --disable-static --enable-shared
+make -j$njobs
+$sudo make install
+rm -fR "$DIR"
+
+#
+# fdk-aac
 #
 DIR=$TMPDIR/fdk-aac; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | tar xz --strip-components=1
@@ -226,7 +239,7 @@ curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --
    $CUDA \
    --enable-version3 \
    --enable-libwebp \
-   --disable-libass \
+   --enable-libass \
    --extra-cflags="-I${PREFIX}/include -I${PREFIX}/include/ffnvcodec -I/usr/local/cuda/include/" \
    --extra-ldflags="-L${PREFIX}/lib -L${OPENSSL}/lib -L/usr/local/cuda/lib64" \
    --extra-libs="-ldl" \
