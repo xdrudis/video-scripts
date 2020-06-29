@@ -1,7 +1,7 @@
-![FFmpeg on Ubuntu](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20Ubuntu/badge.svg)
-![FFmpeg on MacOS](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20MacOS/badge.svg)
-![FFmpeg on CentOS](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20CentOS/badge.svg)
-![FFmpeg on Alpine Linux](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20Alpine%20Linux/badge.svg)
+![Ubuntu](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20Ubuntu/badge.svg)
+![MacOS](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20MacOS/badge.svg)
+![CentOS](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20CentOS/badge.svg)
+![Alpine Linux](https://github.com/xdrudis/video-scripts/workflows/FFmpeg%20on%20Alpine%20Linux/badge.svg)
 
 # Video scripts
 
