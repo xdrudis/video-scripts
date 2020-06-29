@@ -10,8 +10,8 @@
 
 set -euo pipefail
 
-# Requirements: build-essentials (gcc, make), git, openssl and diff
-# See run_* scripts for a full list of packages for each platform
+# See https://github.com/xdrudis/video-scripts/tree/master/.github/workflows
+# for a full list of packages needed for each platform.
 
 #
 # Destination folder. Ffmpeg and tools will be in $PREFIX/bin

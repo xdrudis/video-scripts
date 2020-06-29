@@ -1,0 +1,21 @@
+name: FFmpeg on MacOS
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: macos-10.15
+    env:
+      CC: clang
+      CXX: clang++
+    steps:
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install nasm pkg-config curl cmake automake openssl@1.1 fribidi
+      - uses: actions/checkout@v2
+      - name: Build FFmpeg
+        run: |
+          bash -x ./ffmpeg-compile/build-ffmpeg.sh
+          bash -x ./ffmpeg-compile/test-ffmpeg.sh

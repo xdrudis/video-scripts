@@ -1,0 +1,20 @@
+name: FFmpeg on CentOS Linux
+
+on:
+  push:
+
+jobs:
+  build:
+    # CentOS is not natively supported in Github actions, but we can run in a container
+    runs-on: ubuntu-latest
+    container: centos:8
+    steps:
+      - name: Install dependencies
+        run: |
+          yum update -y
+          yum -y install curl git autoconf automake cmake freetype-devel gcc gcc-c++ git libtool make pkgconfig zlib-devel openssl-devel diffutils fribidi-devel
+      - uses: actions/checkout@v2
+      - name: Build FFmpeg
+        run: |
+          bash -x ./ffmpeg-compile/build-ffmpeg.sh
+          bash -x ./ffmpeg-compile/test-ffmpeg.sh
