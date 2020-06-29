@@ -237,6 +237,8 @@ curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --
    --enable-small \
    $VMAF \
    $CUDA \
+   --enable-indev=alsa \
+   --enable-outdev=alsa \
    --enable-version3 \
    --enable-libwebp \
    --enable-libass \
