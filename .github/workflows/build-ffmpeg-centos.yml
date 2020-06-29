@@ -1,7 +1,12 @@
-name: FFmpeg on CentOS Linux
+name: FFmpeg on CentOS
 
 on:
+  pull_request:
   push:
+    branches:    
+       - master
+    paths-ignore:
+       - '**.md'
 
 jobs:
   build:

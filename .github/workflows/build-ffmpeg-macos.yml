@@ -1,7 +1,12 @@
 name: FFmpeg on MacOS
 
 on:
+  pull_request:
   push:
+    branches:    
+       - master
+    paths-ignore:
+       - '**.md'
 
 jobs:
   build:
