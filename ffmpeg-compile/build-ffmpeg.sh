@@ -179,7 +179,7 @@ rm -fR "$DIR"
 #
 DIR=$TMPDIR/libvpx; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/webmproject/libvpx/tarball/${LIBVPX_VERSION} | tar xz --strip-components 1
-./configure --prefix="$PREFIX" --disable-dependency-tracking --disable-examples --disable-unit-tests --enable-pic --enable-vp9-highbitdepth
+./configure --prefix="$PREFIX" --as=nasm --disable-dependency-tracking --disable-examples --disable-unit-tests --enable-pic --enable-vp9-highbitdepth
 make -j$njobs
 $sudo make install
 rm -fR "$DIR"

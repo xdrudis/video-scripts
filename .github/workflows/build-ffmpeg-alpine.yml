@@ -7,7 +7,7 @@ jobs:
   build:
     # Alpine Linux is not natively supported in Github actions, but we can run in a container
     runs-on: ubuntu-latest
-    container: alpine:3.7
+    container: alpine:3.12
     steps:
       - name: Install dependencies
         run: |
