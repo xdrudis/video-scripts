@@ -1,4 +1,4 @@
-name: FFmpeg on CentOS
+name: CentOS
 
 on:
   pull_request:

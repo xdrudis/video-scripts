@@ -1,4 +1,4 @@
-name: FFmpeg on Alpine Linux
+name: Alpine Linux
 
 on:
   pull_request:

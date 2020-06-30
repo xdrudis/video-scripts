@@ -1,4 +1,4 @@
-name: FFmpeg on Ubuntu 20.04
+name: Ubuntu 20.04
 
 on:
   pull_request:
