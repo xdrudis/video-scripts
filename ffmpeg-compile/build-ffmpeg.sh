@@ -205,8 +205,10 @@ if [ -r /usr/local/cuda ] ; then
    $sudo make install
    rm -fR "$DIR"
    CUDA="--enable-nvenc --enable-cuda --enable-cuvid --enable-libnpp"
+   CUDA_LD_LIBRARY_PATH=":/usr/local/cuda/targets/x86_64-linux/lib"
 else
    CUDA=""
+   CUDA_LD_LIBRARY_PATH=""
 fi
 
 #
@@ -260,5 +262,5 @@ echo 🎉🎉🎉 Success!
 echo
 echo "Please run this:
 
-echo 'export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
+echo 'export LD_LIBRARY_PATH=$PREFIX/lib$CUDA_LD_LIBRARY_PATH:\$LD_LIBRARY_PATH
 export PATH=$PREFIX/bin:\$PATH' >> $HOME/.bashrc"

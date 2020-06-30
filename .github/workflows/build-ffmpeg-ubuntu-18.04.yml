@@ -1,4 +1,4 @@
-name: FFmpeg on Ubuntu
+name: FFmpeg on Ubuntu 18.04
 
 on:
   pull_request:
@@ -10,13 +10,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
     steps:
       - name: Install dependencies
         run: |
           sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
           sudo apt-get update -qq
-          sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install build-essential cmake curl autoconf automake libtool git libfreetype-dev libssl-dev diffutils pkg-config nasm=2.14.02-1 libfribidi-dev
+          sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install build-essential cmake curl autoconf automake libtool git libfreetype6-dev libssl-dev diffutils pkg-config nasm libfribidi-dev
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |
