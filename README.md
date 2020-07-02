@@ -1,8 +1,8 @@
-![Ubuntu 18.04](https://github.com/xdrudis/video-scripts/workflows/Ubuntu%2018.04/badge.svg)
-![Ubuntu 20.04](https://github.com/xdrudis/video-scripts/workflows/Ubuntu%2020.04/badge.svg)
-![MacOS](https://github.com/xdrudis/video-scripts/workflows/MacOS/badge.svg)
-![CentOS](https://github.com/xdrudis/video-scripts/workflows/CentOS/badge.svg)
-![Alpine Linux](https://github.com/xdrudis/video-scripts/workflows/Alpine%20Linux/badge.svg)
+[![Ubuntu 18.04](https://github.com/xdrudis/video-scripts/workflows/Ubuntu%2018.04/badge.svg)](https://github.com/xdrudis/video-scripts/actions?query=workflow%3A%22Ubuntu+18.04%22+branch%3Amaster)
+[![Ubuntu 20.04](https://github.com/xdrudis/video-scripts/workflows/Ubuntu%2020.04/badge.svg)](https://github.com/xdrudis/video-scripts/actions?query=workflow%3A%22Ubuntu+20.04%22+branch%3Amaster)
+[![MacOS](https://github.com/xdrudis/video-scripts/workflows/MacOS/badge.svg)](https://github.com/xdrudis/video-scripts/actions?query=workflow%3A%22MacOS%22+branch%3Amaster)
+[![CentOS](https://github.com/xdrudis/video-scripts/workflows/CentOS/badge.svg)](https://github.com/xdrudis/video-scripts/actions?query=workflow%3A%22CentOS%22+branch%3Amaster)
+[![Alpine Linux](https://github.com/xdrudis/video-scripts/workflows/Alpine%20Linux/badge.svg)](https://github.com/xdrudis/video-scripts/actions?query=workflow%3A%22Alpine%20Linux%22+branch%3Amaster)
 
 # Video scripts
 
