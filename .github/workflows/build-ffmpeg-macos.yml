@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install nasm pkg-config curl cmake automake openssl@1.1 fribidi
+          brew install nasm pkg-config curl cmake automake openssl@1.1 fribidi fontconfig
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |
