@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --virtual build-dependencies build-base gcc bash cmake curl autoconf automake libtool git freetype-dev openssl-dev diffutils fribidi-dev
+          apk add --virtual build-dependencies build-base gcc bash cmake curl autoconf automake libtool git freetype-dev openssl-dev diffutils fribidi-dev nasm fontconfig-dev terminus-font
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |

@@ -37,11 +37,11 @@ LIBVPX_VERSION=de4aeda            # git commit, as latest version v1.8.2 fail to
 LIBWEBP_VERSION=1.1.0             # https://github.com/webmproject/libwebp/releases
 LIBASS_VERSION=0.13.7             # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=9.1.23.1 # https://github.com/FFmpeg/nv-codec-headers/releases
-PATH="${PREFIX}/bin:$PATH"
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
 export LD_LIBRARY_PATH=$PREFIX/lib:${LD_LIBRARY_PATH:-}
+PATH="${PREFIX}/bin:$PATH"
 
 ncores=$(nproc 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 4)
 njobs=$(( $ncores * 3 / 2 )) # 1.5 number of cores
@@ -76,7 +76,7 @@ fi
 DIR=$TMPDIR/libass; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz | tar xz --strip-components=1
 ./autogen.sh
-./configure --prefix="$PREFIX" --disable-static --enable-shared --disable-require-system-font-provider
+./configure --prefix="$PREFIX" --disable-static --enable-shared
 make -j$njobs
 $sudo make install
 rm -fR "$DIR"
@@ -244,6 +244,7 @@ curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --
    --enable-version3 \
    --enable-libwebp \
    --enable-libass \
+   --enable-fontconfig \
    --extra-cflags="-I${PREFIX}/include -I${PREFIX}/include/ffnvcodec -I/usr/local/cuda/include/" \
    --extra-ldflags="-L${PREFIX}/lib -L${OPENSSL}/lib -L/usr/local/cuda/lib64" \
    --extra-libs="-ldl" \

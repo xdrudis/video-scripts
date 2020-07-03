@@ -16,7 +16,7 @@ jobs:
         run: |
           sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
           sudo apt-get update -qq
-          sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install build-essential cmake curl autoconf automake libtool git libfreetype6-dev libssl-dev diffutils pkg-config nasm libfribidi-dev
+          sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install build-essential cmake curl autoconf automake libtool git libfreetype6-dev libssl-dev diffutils pkg-config nasm libfribidi-dev fontconfig
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |
