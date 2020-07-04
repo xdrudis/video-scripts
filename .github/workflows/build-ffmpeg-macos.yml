@@ -18,9 +18,16 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install nasm pkg-config curl cmake automake openssl@1.1 fribidi fontconfig
+          brew install nasm pkg-config curl cmake automake openssl@1.1 fribidi fontconfig ninja
+          brew upgrade python3
+      - name: Install meson
+        run: |
+          curl -sL https://bootstrap.pypa.io/get-pip.py | python3
+          pip3 install meson
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |
           bash -x ./ffmpeg-compile/build-ffmpeg.sh
+      - name: Verify installation
+        run: |
           bash -x ./ffmpeg-compile/test-ffmpeg.sh
