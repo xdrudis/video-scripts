@@ -18,9 +18,10 @@ cd $TMPDIR
 
 curl -sLO https://media.xiph.org/video/derf/y4m/akiyo_qcif.y4m
 
-export LD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/lib64:$PREFIX/lib/$HOSTTYPE-$OSTYPE:${LD_LIBRARY_PATH:-}
+export LD_LIBRARY_PATH=$PREFIX/lib:${LD_LIBRARY_PATH:-}
 
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libx264 -vf "drawtext=text='text test':fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5:x=20:y=20" output-h264.mp4
+$PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libsvt_av1 test.ivf
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libx265 output-h265.mp4
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libvpx-vp9 output-vp9.webm
 
