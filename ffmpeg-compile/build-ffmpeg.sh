@@ -26,7 +26,7 @@ sudo=""
 FFMPEG_VERSION=4.3                # https://github.com/FFmpeg/FFmpeg/releases
 FDKAAC_VERSION=2.0.1              # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0             # https://github.com/ultravideo/kvazaar/releases
-LIB_VMAF_VERSION=1.3.15           # https://github.com/Netflix/vmaf/releases
+LIB_VMAF_VERSION=1.5.2            # https://github.com/Netflix/vmaf/releases
 X264_VERSION=296494a4             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
 X265_VERSION=3.4                  # https://github.com/videolan/x265/releases
 NASM_VERSION=2.14.02              # https://www.nasm.us/pub/nasm/releasebuilds
@@ -39,9 +39,9 @@ LIBASS_VERSION=0.13.7             # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=9.1.23.1 # https://github.com/FFmpeg/nv-codec-headers/releases
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
-export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
-export LD_LIBRARY_PATH=$PREFIX/lib:${LD_LIBRARY_PATH:-}
-PATH="${PREFIX}/bin:$PATH"
+export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/lib/$HOSTTYPE-$OSTYPE/pkgconfig:$PREFIX/lib64/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
+export LD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/lib64:${LD_LIBRARY_PATH:-}
+PATH="${PREFIX}/bin:$HOME/.local/bin:$PATH"
 
 ncores=$(nproc 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 4)
 njobs=$(( $ncores * 3 / 2 )) # 1.5 number of cores
@@ -109,10 +109,8 @@ if [[ "$HOSTTYPE" == x86_64 ]] ; then
    #
    DIR=$TMPDIR/vmaf; mkdir -p "$DIR"; cd "$DIR"
    curl -sL https://github.com/Netflix/vmaf/archive/v${LIB_VMAF_VERSION}.tar.gz | tar xz --strip-components=1
-   cp wrapper/Makefile wrapper/Makefile.bak && sed "s;INSTALL_PREFIX = /usr/local;INSTALL_PREFIX = $PREFIX;" wrapper/Makefile.bak > wrapper/Makefile
-   make -j$njobs -C ptools
-   make -j$njobs -C wrapper
-   $sudo make install
+   meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX"
+   $sudo ninja -vC libvmaf/build install
    rm -fR "$DIR"
 
    VMAF="--enable-libvmaf"
@@ -247,8 +245,8 @@ curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --
    --enable-fontconfig \
    --extra-cflags="-I${PREFIX}/include -I${PREFIX}/include/ffnvcodec -I/usr/local/cuda/include/" \
    --extra-ldflags="-L${PREFIX}/lib -L${OPENSSL}/lib -L/usr/local/cuda/lib64" \
-   --extra-libs="-ldl" \
-   --prefix="$PREFIX"
+   --extra-libs="-ldl -lm" \
+   --prefix="$PREFIX" || ( cat ffbuild/config.log ; exit 1 )
 make -j$njobs
 $sudo make install
 cd tools
@@ -263,5 +261,5 @@ echo 🎉🎉🎉 Success!
 echo
 echo "Please run this:
 
-echo 'export LD_LIBRARY_PATH=$PREFIX/lib$CUDA_LD_LIBRARY_PATH:\$LD_LIBRARY_PATH
+echo 'export LD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/lib64:$PREFIX/lib/$HOSTTYPE-$OSTYPE$CUDA_LD_LIBRARY_PATH:\$LD_LIBRARY_PATH
 export PATH=$PREFIX/bin:\$PATH' >> $HOME/.bashrc"

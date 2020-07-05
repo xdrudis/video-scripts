@@ -16,9 +16,14 @@ jobs:
         run: |
           sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
           sudo apt-get update -qq
-          sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install build-essential cmake curl autoconf automake libtool git libfreetype-dev libssl-dev diffutils pkg-config nasm libfribidi-dev fontconfig
+          sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install build-essential cmake curl autoconf automake libtool git libfreetype-dev libssl-dev diffutils pkg-config nasm libfribidi-dev fontconfig ninja-build python3 python3-pip python3-setuptools
+      - name: Install meson
+        run: |
+          pip3 install meson
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |
           bash -x ./ffmpeg-compile/build-ffmpeg.sh
+      - name: Verify installation
+        run: |
           bash -x ./ffmpeg-compile/test-ffmpeg.sh

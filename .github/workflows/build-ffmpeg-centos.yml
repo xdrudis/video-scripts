@@ -17,9 +17,15 @@ jobs:
       - name: Install dependencies
         run: |
           yum update -y
-          yum -y install curl git autoconf automake cmake freetype-devel gcc gcc-c++ git libtool make pkgconfig zlib-devel openssl-devel diffutils fribidi-devel fontconfig-devel
+          yum -y install curl git autoconf automake cmake freetype-devel gcc gcc-c++ git libtool make pkgconfig zlib-devel openssl-devel diffutils fribidi-devel fontconfig-devel python3 python3-pip
+          dnf -y --enablerepo=PowerTools install ninja-build
+      - name: Install meson
+        run: |
+          pip3 install meson
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |
           bash -x ./ffmpeg-compile/build-ffmpeg.sh
+      - name: Verify installation
+        run: |
           bash -x ./ffmpeg-compile/test-ffmpeg.sh
