@@ -20,6 +20,7 @@ jobs:
                  python3 python3-pip python3-setuptools
           pip3 install meson
       - uses: actions/checkout@v2
+      - name: Build FFmpeg
         run: |
           bash -x ./ffmpeg-compile/build-ffmpeg.sh
       - name: Verify installation
