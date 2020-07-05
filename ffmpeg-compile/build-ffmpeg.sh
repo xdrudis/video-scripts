@@ -261,5 +261,5 @@ echo 🎉🎉🎉 Success!
 echo
 echo "Please run this:
 
-echo 'export LD_LIBRARY_PATH=$PREFIX/lib$CUDA_LD_LIBRARY_PATH:\$LD_LIBRARY_PATH
+echo 'export LD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/lib64:$PREFIX/lib/$HOSTTYPE-$OSTYPE$CUDA_LD_LIBRARY_PATH:\$LD_LIBRARY_PATH
 export PATH=$PREFIX/bin:\$PATH' >> $HOME/.bashrc"
