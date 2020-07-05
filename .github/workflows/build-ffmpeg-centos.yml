@@ -17,7 +17,9 @@ jobs:
       - name: Install dependencies
         run: |
           yum update -y
-          yum -y install curl git autoconf automake cmake freetype-devel gcc gcc-c++ git libtool make pkgconfig zlib-devel openssl-devel diffutils fribidi-devel fontconfig-devel python3 python3-pip
+          yum -y install curl git autoconf automake cmake gcc gcc-c++ git libtool make pkgconfig \
+              zlib-devel openssl-devel patch diffutils fribidi-devel fontconfig-devel freetype-devel \
+              python3 python3-pip
           dnf -y --enablerepo=PowerTools install ninja-build
           pip3 install meson
       - uses: actions/checkout@v2

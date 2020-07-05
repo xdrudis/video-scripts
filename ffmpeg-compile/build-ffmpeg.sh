@@ -47,6 +47,8 @@ PATH="${PREFIX}/bin:$HOME/.local/bin:$PATH"
 
 ncores=$(nproc 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 4)
 njobs=$(( $ncores * 3 / 2 )) # 1.5 number of cores
+export MAKEFLAGS="-j$njobs"
+export MAKEOPTS="-j$njobs"
 
 TMPDIR=$(mktemp -d)
 
@@ -67,7 +69,7 @@ else
    DIR=$TMPDIR/nasm; mkdir -p "$DIR"; cd "$DIR"
    curl -sL https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VERSION}/nasm-${NASM_VERSION}.tar.gz | tar xz --strip-components=1
    ./configure --prefix="$PREFIX"
-   make -j$njobs
+   make
    $sudo make install
    rm -fR "$DIR"
 fi
@@ -90,7 +92,7 @@ curl -sL https://github.com/OpenVisualCloud/SVT-AV1/archive/v${SVT_AV1_VERSION}.
 mkdir -p Bin/Release
 cd Build/linux
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR="$PREFIX"/lib -DCMAKE_ASM_NASM_COMPILER=nasm ../..
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -101,7 +103,7 @@ DIR=$TMPDIR/libass; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz | tar xz --strip-components=1
 ./autogen.sh
 ./configure --prefix="$PREFIX" --disable-static --enable-shared
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -112,7 +114,7 @@ DIR=$TMPDIR/fdk-aac; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | tar xz --strip-components=1
 autoreconf -fiv
 ./configure --prefix="$PREFIX" --enable-shared --datadir="$DIR"
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -123,7 +125,7 @@ DIR=$TMPDIR/kvazaar; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/ultravideo/kvazaar/archive/v${KVAZAAR_VERSION}.tar.gz | tar xz --strip-components=1
 ./autogen.sh
 ./configure --prefix="$PREFIX" --disable-static --enable-shared
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -149,7 +151,7 @@ DIR=$TMPDIR/libmp3lame; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://downloads.sourceforge.net/project/lame/lame/${LIBMP3LAME_VERSION}/lame-${LIBMP3LAME_VERSION}.tar.gz | tar xz --strip-components=1
 [[ "$OSTYPE" == darwin* ]] && cp include/libmp3lame.sym include/libmp3lame.sym.bak && sed '/lame_init_old/d' include/libmp3lame.sym.bak > include/libmp3lame.sym # see https://stackoverflow.com/a/53955675
 ./configure --prefix="$PREFIX" --enable-shared --enable-nasm
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -161,7 +163,7 @@ curl -sL https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}.tar.
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" ..
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -171,7 +173,7 @@ rm -fR "$DIR"
 DIR=$TMPDIR/libopus; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://archive.mozilla.org/pub/opus/opus-${LIBOPUS_VERSION}.tar.gz | tar xz --strip-components=1
 ./configure --prefix="$PREFIX" --enable-shared
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -181,7 +183,7 @@ rm -fR "$DIR"
 DIR=$TMPDIR/x264; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://code.videolan.org/videolan/x264/-/archive/master/x264-${X264_VERSION}.tar.gz | tar xz --strip-components 1
 ./configure --prefix="$PREFIX" --enable-static --enable-pic
-make -j$njobs
+make
 $sudo make install-lib-static
 rm -fR "$DIR"
 
@@ -192,7 +194,7 @@ DIR=$TMPDIR/x265; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/videolan/x265/archive/${X265_VERSION}.tar.gz | tar xz --strip-components 1
 cd build/linux
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" ../../source
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -202,7 +204,7 @@ rm -fR "$DIR"
 DIR=$TMPDIR/libvpx; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/webmproject/libvpx/tarball/${LIBVPX_VERSION} | tar xz --strip-components 1
 ./configure --prefix="$PREFIX" --as=nasm --disable-dependency-tracking --disable-examples --disable-unit-tests --enable-pic --enable-vp9-highbitdepth
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -212,7 +214,7 @@ rm -fR "$DIR"
 DIR=$TMPDIR/libwebp; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${LIBWEBP_VERSION}.tar.gz | tar xz --strip-components 1
 ./configure --prefix="$PREFIX" --enable-libwebpdecoder --enable-libwebpdemux --enable-libwebpmux 
-make -j$njobs
+make
 $sudo make install
 rm -fR "$DIR"
 
@@ -223,7 +225,7 @@ if [ -r /usr/local/cuda ] ; then
    DIR=$TMPDIR/nv-codec-headers; mkdir -p "$DIR"; cd "$DIR"
    curl -sL https://github.com/FFmpeg/nv-codec-headers/archive/n${NV_CODEC_HEADERS_VERSION}.tar.gz | tar xz --strip-components 1
    cp Makefile Makefile.bak ; sed "s;/usr/local;$PREFIX;" Makefile.bak > Makefile
-   make -j$njobs
+   make
    $sudo make install
    rm -fR "$DIR"
    CUDA="--enable-nvenc --enable-cuda --enable-cuvid --enable-libnpp"
@@ -274,7 +276,7 @@ curl -sL https://raw.githubusercontent.com/OpenVisualCloud/SVT-AV1/v${SVT_AV1_VE
    --extra-ldflags="-L${PREFIX}/lib -L${OPENSSL}/lib -L/usr/local/cuda/lib64" \
    --extra-libs="-ldl -lm" \
    --prefix="$PREFIX" || ( cat ffbuild/config.log ; exit 1 )
-make -j$njobs
+make
 $sudo make install
 cd tools
 make qt-faststart
