@@ -3,7 +3,7 @@ name: Ubuntu 18.04
 on:
   pull_request:
   push:
-    branches:    
+    branches:
        - master
     paths-ignore:
        - '**.md'
