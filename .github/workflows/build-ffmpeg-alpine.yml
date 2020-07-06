@@ -1,9 +1,5 @@
 name: Alpine Linux
 
-#
-# Disabled. For some reason meson/ninja in VMAF do not produce vcs_version.h from vcs_version.h.in
-#
-
 on:
   pull_request:
   push:
