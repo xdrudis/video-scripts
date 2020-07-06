@@ -1,9 +1,5 @@
 name: Alpine Linux
 
-#
-# Disabled. For some reason meson/ninja in VMAF do not produce vcs_version.h from vcs_version.h.in
-#
-
 on:
   pull_request:
   push:
@@ -21,10 +17,10 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --virtual build-dependencies build-base gcc bash cmake curl autoconf automake libtool git freetype-dev openssl-dev diffutils fribidi-dev nasm fontconfig-dev terminus-font ninja python3 py-pip
+          apk add --virtual build-dependencies build-base gcc bash cmake curl autoconf automake libtool git freetype-dev openssl-dev diffutils fribidi-dev nasm fontconfig-dev terminus-font python3 py-pip
       - name: Install meson
         run: |
-          pip install meson
+          python3 -m pip install ninja meson
       - uses: actions/checkout@v2
       - name: Build FFmpeg
         run: |

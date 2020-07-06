@@ -3,7 +3,7 @@ name: CentOS
 on:
   pull_request:
   push:
-    branches:    
+    branches:
        - master
     paths-ignore:
        - '**.md'

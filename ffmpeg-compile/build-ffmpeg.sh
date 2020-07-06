@@ -213,7 +213,7 @@ rm -fR "$DIR"
 #
 DIR=$TMPDIR/libwebp; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${LIBWEBP_VERSION}.tar.gz | tar xz --strip-components 1
-./configure --prefix="$PREFIX" --enable-libwebpdecoder --enable-libwebpdemux --enable-libwebpmux 
+./configure --prefix="$PREFIX" --enable-libwebpdecoder --enable-libwebpdemux --enable-libwebpmux
 make
 $sudo make install
 rm -fR "$DIR"
