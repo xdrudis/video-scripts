@@ -23,7 +23,7 @@ sudo=""
 #sudo=sudo
 
 # Software versions
-FFMPEG_VERSION=4.3                # https://github.com/FFmpeg/FFmpeg/releases
+FFMPEG_VERSION=4.3.1              # https://github.com/FFmpeg/FFmpeg/releases
 FDKAAC_VERSION=2.0.1              # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0             # https://github.com/ultravideo/kvazaar/releases
 LIB_VMAF_VERSION=1.5.2            # https://github.com/Netflix/vmaf/releases
