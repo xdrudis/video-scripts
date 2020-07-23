@@ -12,6 +12,8 @@
    - Includes Nvidia nvenc support (if driver available)
    - No root access needed. Multiple environments can coexist in different folders
 
+(Windows is not supported, you might want to check https://github.com/m-ab-s/media-autobuild_suite)
+
 Clone the repo or just do
 ```
 curl -sL https://raw.githubusercontent.com/xdrudis/video-scripts/master/ffmpeg-compile/build-ffmpeg.sh | bash
