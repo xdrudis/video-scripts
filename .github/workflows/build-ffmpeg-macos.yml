@@ -15,7 +15,8 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install nasm pkg-config curl cmake automake openssl@1.1 fribidi fontconfig ninja
+          brew install nasm pkg-config automake openssl@1.1 fribidi fontconfig ninja
+          # brew install curl cmake
           curl -sL https://bootstrap.pypa.io/get-pip.py | python3
           pip3 install meson
       - uses: actions/checkout@v2

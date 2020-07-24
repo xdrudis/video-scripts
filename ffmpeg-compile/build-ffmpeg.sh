@@ -133,9 +133,11 @@ if [[ "$HOSTTYPE" == x86_64 ]] ; then
    #
    # libvmaf
    #
-   DIR=$TMPDIR/vmaf; mkdir -p "$DIR"; cd "$DIR"
-   curl -sL https://github.com/Netflix/vmaf/archive/v${LIB_VMAF_VERSION}.tar.gz | tar xz --strip-components=1
+   DIR=$TMPDIR/vmaf; cd "$TMPDIR"
+   git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
+   cd $DIR
    meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
+   $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
    $sudo ninja -vC libvmaf/build install
    rm -fR "$DIR"
 
