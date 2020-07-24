@@ -137,7 +137,8 @@ if [[ "$HOSTTYPE" == x86_64 ]] ; then
    git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
    cd $DIR
    meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
-   $sudo ninja -vC libvmaf/build include/vcs_version.h install
+   $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
+   $sudo ninja -vC libvmaf/build install
    rm -fR "$DIR"
 
    VMAF="--enable-libvmaf"
