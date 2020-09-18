@@ -26,19 +26,19 @@ sudo=""
 FFMPEG_VERSION=4.3.1              # https://github.com/FFmpeg/FFmpeg/releases
 FDKAAC_VERSION=2.0.1              # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0             # https://github.com/ultravideo/kvazaar/releases
-LIB_VMAF_VERSION=1.5.2            # https://github.com/Netflix/vmaf/releases
-X264_VERSION=296494a4             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
+LIB_VMAF_VERSION=1.5.3            # https://github.com/Netflix/vmaf/releases
+X264_VERSION=cde9a933             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
 X265_VERSION=3.4                  # https://github.com/videolan/x265/releases
 NASM_VERSION=2.14.02              # https://www.nasm.us/pub/nasm/releasebuilds
 LIBMP3LAME_VERSION=3.100          # https://sourceforge.net/projects/lame/files/lame/
 LIBOPUS_VERSION=1.3.1             # https://archive.mozilla.org/pub/opus/
 OPENJPEG_VERSION=2.3.1            # https://github.com/uclouvain/openjpeg/releases
-LIBVPX_VERSION=de4aeda            # git commit, as latest version v1.8.2 fail to build on macOs https://github.com/webmproject/libvpx/releases
+LIBVPX_VERSION=1.9.0              # https://github.com/webmproject/libvpx/releases
 LIBWEBP_VERSION=1.1.0             # https://github.com/webmproject/libwebp/releases
-LIBASS_VERSION=0.13.7             # https://github.com/libass/libass/releases
+LIBASS_VERSION=0.14.0             # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=9.1.23.1 # https://github.com/FFmpeg/nv-codec-headers/releases
 LIBDAV1D_VERSION=0.7.1            # https://code.videolan.org/videolan/dav1d/-/releases
-SVT_AV1_VERSION=0.8.4             # https://github.com/OpenVisualCloud/SVT-AV1/releases
+SVT_AV1_VERSION=0.8.5             # https://github.com/OpenVisualCloud/SVT-AV1/releases
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
@@ -204,7 +204,7 @@ rm -fR "$DIR"
 # libvpx
 #
 DIR=$TMPDIR/libvpx; mkdir -p "$DIR"; cd "$DIR"
-curl -sL https://github.com/webmproject/libvpx/tarball/${LIBVPX_VERSION} | tar xz --strip-components 1
+curl -sL https://github.com/webmproject/libvpx/archive/v${LIBVPX_VERSION}.tar.gz | tar xz --strip-components 1
 ./configure --prefix="$PREFIX" --as=nasm --disable-dependency-tracking --disable-examples --disable-unit-tests --enable-pic --enable-vp9-highbitdepth
 make
 $sudo make install
