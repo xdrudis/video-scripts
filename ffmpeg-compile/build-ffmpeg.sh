@@ -38,7 +38,7 @@ LIBWEBP_VERSION=1.1.0             # https://github.com/webmproject/libwebp/relea
 LIBASS_VERSION=0.14.0             # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=9.1.23.1 # https://github.com/FFmpeg/nv-codec-headers/releases
 LIBDAV1D_VERSION=0.7.1            # https://code.videolan.org/videolan/dav1d/-/releases
-SVT_AV1_VERSION=0.8.5             # https://github.com/OpenVisualCloud/SVT-AV1/releases
+SVT_AV1_VERSION=0.8.4             # https://github.com/OpenVisualCloud/SVT-AV1/releases
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
