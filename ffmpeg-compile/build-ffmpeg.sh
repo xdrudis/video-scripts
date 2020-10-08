@@ -55,7 +55,7 @@ TMPDIR=$(mktemp -d)
 cleanup() {
     status=$?
     [ $status -eq 0 ] || echo -e "\n☠️ ☠️ ☠️  Script failed (status $status)\n"
-    rm -fR "$TMPDIR"
+    $sudo rm -fR "$TMPDIR"
     exit $status
 }
 trap cleanup INT TERM EXIT
@@ -82,7 +82,7 @@ git clone -b ${LIBDAV1D_VERSION} https://code.videolan.org/videolan/dav1d.git
 cd $DIR
 meson build --prefix "$PREFIX" --libdir "$PREFIX/lib" --buildtype release
 $sudo ninja -vC build install
-rm -fR "$DIR"
+$sudo rm -fR "$DIR"
 
 #
 # SVT-AV1
@@ -139,7 +139,7 @@ if [[ "$HOSTTYPE" == x86_64 ]] ; then
    meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
    $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
    $sudo ninja -vC libvmaf/build install
-   rm -fR "$DIR"
+   $sudo rm -fR "$DIR"
 
    VMAF="--enable-libvmaf"
 else
@@ -205,7 +205,7 @@ rm -fR "$DIR"
 #
 DIR=$TMPDIR/libvpx; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/webmproject/libvpx/archive/v${LIBVPX_VERSION}.tar.gz | tar xz --strip-components 1
-./configure --prefix="$PREFIX" --as=nasm --disable-dependency-tracking --disable-examples --disable-unit-tests --enable-pic --enable-vp9-highbitdepth
+./configure --prefix="$PREFIX" --as=nasm --disable-dependency-tracking --disable-examples --disable-unit-tests --enable-static --enable-pic --enable-vp9-highbitdepth
 make
 $sudo make install
 rm -fR "$DIR"
