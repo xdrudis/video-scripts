@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Portable script to compile ffmpeg, with vmaf support (x86_64 only)
+# Portable script to compile ffmpeg, with vmaf support.
 # Requires no root access, making it easy for multiple environments to coexist.
 # Inspired by https://github.com/jrottenberg/ffmpeg, but not focused on containers.
 #
@@ -27,7 +27,7 @@ FFMPEG_VERSION=4.3.1              # https://github.com/FFmpeg/FFmpeg/releases
 FDKAAC_VERSION=2.0.1              # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0             # https://github.com/ultravideo/kvazaar/releases
 LIB_VMAF_VERSION=1.5.3            # https://github.com/Netflix/vmaf/releases
-X264_VERSION=cde9a933             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
+X264_VERSION=d198931a             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
 X265_VERSION=3.4                  # https://github.com/videolan/x265/releases
 NASM_VERSION=2.14.02              # https://www.nasm.us/pub/nasm/releasebuilds
 LIBMP3LAME_VERSION=3.100          # https://sourceforge.net/projects/lame/files/lame/
@@ -39,6 +39,7 @@ LIBASS_VERSION=0.14.0             # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=9.1.23.1 # https://github.com/FFmpeg/nv-codec-headers/releases
 LIBDAV1D_VERSION=0.7.1            # https://code.videolan.org/videolan/dav1d/-/releases
 SVT_AV1_VERSION=0.8.5             # https://github.com/OpenVisualCloud/SVT-AV1/releases
+AOM_VERSION=v2.0.0                # Tags under https://aomedia.googlesource.com/aom
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
@@ -129,22 +130,16 @@ make
 $sudo make install
 rm -fR "$DIR"
 
-if [[ "$HOSTTYPE" == x86_64 ]] ; then
-   #
-   # libvmaf
-   #
-   DIR=$TMPDIR/vmaf; cd "$TMPDIR"
-   git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
-   cd $DIR
-   meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
-   $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
-   $sudo ninja -vC libvmaf/build install
-   $sudo rm -fR "$DIR"
-
-   VMAF="--enable-libvmaf"
-else
-   VMAF=""
-fi
+#
+# libvmaf
+#
+DIR=$TMPDIR/vmaf; cd "$TMPDIR"
+git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
+cd $DIR
+meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
+$sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
+$sudo ninja -vC libvmaf/build install
+$sudo rm -fR "$DIR"
 
 #
 # libmp3lame
@@ -220,6 +215,23 @@ make
 $sudo make install
 rm -fR "$DIR"
 
+#
+# libaom
+#
+DIR=$TMPDIR/aom; mkdir -p "$DIR"; cd "$DIR"
+git clone --branch ${AOM_VERSION} --depth 1 https://aomedia.googlesource.com/aom .
+rm -rf CMakeCache.txt CMakeFiles
+mkdir -p ./aom_build
+cd ./aom_build
+cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DBUILD_SHARED_LIBS=1 ..
+make
+$sudo make install
+
+rm -fR "$DIR"
+
+#
+# Nvidia nvenc
+#
 if [ -r /usr/local/cuda ] ; then
    #
    # Nvidia codec headers
@@ -265,7 +277,7 @@ curl -sL https://raw.githubusercontent.com/OpenVisualCloud/SVT-AV1/v0.8.4/ffmpeg
    --extra-libs=-lpthread \
    --enable-postproc \
    --enable-small \
-   $VMAF \
+   --enable-libvmaf \
    $CUDA \
    --enable-indev=alsa \
    --enable-outdev=alsa \
