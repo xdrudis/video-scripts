@@ -287,6 +287,7 @@ curl -sL https://raw.githubusercontent.com/OpenVisualCloud/SVT-AV1/v0.8.4/ffmpeg
    --enable-fontconfig \
    --enable-libdav1d \
    --enable-libsvtav1 \
+   --enable-libaom \
    --extra-cflags="-I${PREFIX}/include -I${PREFIX}/include/ffnvcodec -I/usr/local/cuda/include/" \
    --extra-ldflags="-L${PREFIX}/lib -L${OPENSSL}/lib -L/usr/local/cuda/lib64" \
    --extra-libs="-ldl -lm" \
