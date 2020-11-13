@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Portable script to compile ffmpeg, with vmaf support (x86_64 only)
+# Portable script to compile ffmpeg, with vmaf support.
 # Requires no root access, making it easy for multiple environments to coexist.
 # Inspired by https://github.com/jrottenberg/ffmpeg, but not focused on containers.
 #
@@ -129,22 +129,18 @@ make
 $sudo make install
 rm -fR "$DIR"
 
-if [[ "$HOSTTYPE" == x86_64 ]] ; then
-   #
-   # libvmaf
-   #
-   DIR=$TMPDIR/vmaf; cd "$TMPDIR"
-   git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
-   cd $DIR
-   meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
-   $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
-   $sudo ninja -vC libvmaf/build install
-   $sudo rm -fR "$DIR"
+#
+# libvmaf
+#
+DIR=$TMPDIR/vmaf; cd "$TMPDIR"
+git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
+cd $DIR
+meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
+$sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
+$sudo ninja -vC libvmaf/build install
+$sudo rm -fR "$DIR"
 
-   VMAF="--enable-libvmaf"
-else
-   VMAF=""
-fi
+VMAF="--enable-libvmaf"
 
 #
 # libmp3lame
