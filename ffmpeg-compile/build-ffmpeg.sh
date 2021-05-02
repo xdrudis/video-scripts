@@ -237,8 +237,6 @@ fi
 #
 DIR=$TMPDIR/ffmpeg; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --strip-components=1
-# Applying patch necessary until release of ffmpeg 4.4
-curl -sL https://raw.githubusercontent.com/OpenVisualCloud/SVT-AV1/v0.8.4/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch | patch -p1
 ./configure \
    --disable-debug \
    --disable-doc \
