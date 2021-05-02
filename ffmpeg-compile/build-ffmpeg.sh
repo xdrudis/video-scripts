@@ -26,7 +26,7 @@ sudo=""
 FFMPEG_VERSION=4.4                # https://github.com/FFmpeg/FFmpeg/releases
 FDKAAC_VERSION=2.0.1              # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0             # https://github.com/ultravideo/kvazaar/releases
-LIB_VMAF_VERSION=1.5.3            # https://github.com/Netflix/vmaf/releases
+LIB_VMAF_VERSION=2.1.1            # https://github.com/Netflix/vmaf/releases
 X264_VERSION=cde9a933             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
 X265_VERSION=3.4                  # https://github.com/videolan/x265/releases
 NASM_VERSION=2.14.02              # https://www.nasm.us/pub/nasm/releasebuilds
@@ -55,7 +55,7 @@ TMPDIR=$(mktemp -d)
 cleanup() {
     status=$?
     [ $status -eq 0 ] || echo -e "\n☠️ ☠️ ☠️  Script failed (status $status)\n"
-    $sudo rm -fR "$TMPDIR"
+    rm -fR "$TMPDIR"
     exit $status
 }
 trap cleanup INT TERM EXIT
@@ -82,7 +82,7 @@ git clone -b ${LIBDAV1D_VERSION} https://code.videolan.org/videolan/dav1d.git
 cd $DIR
 meson build --prefix "$PREFIX" --libdir "$PREFIX/lib" --buildtype release
 $sudo ninja -vC build install
-$sudo rm -fR "$DIR"
+rm -fR "$DIR"
 
 #
 # SVT-AV1
@@ -136,10 +136,11 @@ if [[ "$HOSTTYPE" == x86_64 ]] ; then
    DIR=$TMPDIR/vmaf; cd "$TMPDIR"
    git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
    cd $DIR
-   meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib"
+   meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib" -Denable_float=true
    $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
    $sudo ninja -vC libvmaf/build install
-   $sudo rm -fR "$DIR"
+   sudo cp -r model /usr/local/share
+   rm -fR "$DIR"
 
    VMAF="--enable-libvmaf"
 else
