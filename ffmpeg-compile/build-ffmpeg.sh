@@ -24,21 +24,21 @@ sudo=""
 
 # Software versions
 FFMPEG_VERSION=4.4                # https://github.com/FFmpeg/FFmpeg/releases
-FDKAAC_VERSION=2.0.1              # https://github.com/mstorsjo/fdk-aac/releases
+FDKAAC_VERSION=2.0.2              # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0             # https://github.com/ultravideo/kvazaar/releases
 LIB_VMAF_VERSION=2.1.1            # https://github.com/Netflix/vmaf/releases
-X264_VERSION=cde9a933             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
+X264_VERSION=55d517bc             # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
 X265_VERSION=3.4                  # https://github.com/videolan/x265/releases
 NASM_VERSION=2.14.02              # https://www.nasm.us/pub/nasm/releasebuilds
 LIBMP3LAME_VERSION=3.100          # https://sourceforge.net/projects/lame/files/lame/
 LIBOPUS_VERSION=1.3.1             # https://archive.mozilla.org/pub/opus/
-OPENJPEG_VERSION=2.3.1            # https://github.com/uclouvain/openjpeg/releases
-LIBVPX_VERSION=1.9.0              # https://github.com/webmproject/libvpx/releases
-LIBWEBP_VERSION=1.1.0             # https://github.com/webmproject/libwebp/releases
-LIBASS_VERSION=0.14.0             # https://github.com/libass/libass/releases
+OPENJPEG_VERSION=2.4.0            # https://github.com/uclouvain/openjpeg/releases
+LIBVPX_VERSION=1.10.0             # https://github.com/webmproject/libvpx/releases
+LIBWEBP_VERSION=1.2.0             # https://github.com/webmproject/libwebp/releases
+LIBASS_VERSION=0.15.1             # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=9.1.23.1 # https://github.com/FFmpeg/nv-codec-headers/releases
-LIBDAV1D_VERSION=0.7.1            # https://code.videolan.org/videolan/dav1d/-/releases
-SVT_AV1_VERSION=0.8.5             # https://github.com/OpenVisualCloud/SVT-AV1/releases
+LIBDAV1D_VERSION=0.8.2            # https://code.videolan.org/videolan/dav1d/-/releases
+SVT_AV1_VERSION=0.8.6             # https://github.com/OpenVisualCloud/SVT-AV1/releases
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
@@ -139,7 +139,7 @@ if [[ "$HOSTTYPE" == x86_64 ]] ; then
    meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib" -Denable_float=true
    $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
    $sudo ninja -vC libvmaf/build install
-   sudo cp -r model /usr/local/share
+   $sudo cp -r "$PREFIX/model"
    rm -fR "$DIR"
 
    VMAF="--enable-libvmaf"
