@@ -20,7 +20,7 @@ jobs:
           yum -y install curl git autoconf automake cmake gcc gcc-c++ git libtool make pkgconfig \
               zlib-devel openssl-devel patch diffutils fribidi-devel fontconfig-devel freetype-devel \
               python3 python3-pip unzip
-          curl -sL https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-linux.zip && unzip -p -f -d /usr/local/bin
+          curl -sLo ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-linux.zip && unzip -o ninja.zip -d /usr/local/bin && rm -f ninja.zip
           pip3 install meson
       - uses: actions/checkout@v2
       - name: Build FFmpeg
