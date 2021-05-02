@@ -139,7 +139,7 @@ if [[ "$HOSTTYPE" == x86_64 ]] ; then
    meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib" -Denable_float=true
    $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
    $sudo ninja -vC libvmaf/build install
-   $sudo cp -r model "$PREFIX/model"
+   $sudo cp -r model "$PREFIX/share"
    rm -fR "$DIR"
 
    VMAF="--enable-libvmaf"
