@@ -26,7 +26,7 @@ $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libx265 output-h265.mp4
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libvpx-vp9 output-vp9.webm
 
 if [[ "$HOSTTYPE" == x86_64 ]] ; then
-   $PREFIX/bin/ffmpeg -i output-h264.mp4 -i akiyo_qcif.y4m -lavfi "[0][1]libvmaf=model_path=$PREFIX/share/model/vmaf_v0.6.1.pkl" -f null -
+   $PREFIX/bin/ffmpeg -i output-h264.mp4 -i akiyo_qcif.y4m -lavfi "[0][1]libvmaf=model_path=$PREFIX/share/model/vmaf_v0.6.1.json" -f null -
 fi
 
 if [ -r /usr/local/cuda ] ; then
