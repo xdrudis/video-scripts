@@ -129,23 +129,17 @@ make
 $sudo make install
 rm -fR "$DIR"
 
-if [[ "$HOSTTYPE" == x86_64 ]] ; then
-   #
-   # libvmaf
-   #
-   DIR=$TMPDIR/vmaf; cd "$TMPDIR"
-   git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
-   cd $DIR
-   meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib" -Denable_float=true
-   $sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
-   $sudo ninja -vC libvmaf/build install
-   $sudo cp -r model "$PREFIX/share"
-   rm -fR "$DIR"
-
-   VMAF="--enable-libvmaf"
-else
-   VMAF=""
-fi
+#
+# libvmaf
+#
+DIR=$TMPDIR/vmaf; cd "$TMPDIR"
+git clone -b v${LIB_VMAF_VERSION} https://github.com/Netflix/vmaf.git
+cd $DIR
+meson setup libvmaf libvmaf/build --buildtype release --prefix="$PREFIX" --libdir "$PREFIX/lib" -Denable_float=true
+$sudo ninja -vC libvmaf/build include/vcs_version.h # on some system this is not generated automatically
+$sudo ninja -vC libvmaf/build install
+$sudo cp -r model "$PREFIX/share"
+rm -fR "$DIR"
 
 #
 # libmp3lame
@@ -266,7 +260,7 @@ curl -sL https://raw.githubusercontent.com/OpenVisualCloud/SVT-AV1/v0.8.4/ffmpeg
    --extra-libs=-lpthread \
    --enable-postproc \
    --enable-small \
-   $VMAF \
+   --enable-libvmaf \
    $CUDA \
    --enable-indev=alsa \
    --enable-outdev=alsa \
