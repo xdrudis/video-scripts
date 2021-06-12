@@ -37,7 +37,7 @@ LIBVPX_VERSION=1.10.0              # https://github.com/webmproject/libvpx/relea
 LIBWEBP_VERSION=1.2.0              # https://github.com/webmproject/libwebp/releases
 LIBASS_VERSION=0.14.0              # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=10.0.26.2 # https://github.com/FFmpeg/nv-codec-headers/releases
-LIBDAV1D_VERSION=0.8.2             # https://code.videolan.org/videolan/dav1d/-/releases
+LIBDAV1D_VERSION=0.9.0             # https://code.videolan.org/videolan/dav1d/-/releases
 SVT_AV1_VERSION=0.8.6              # https://github.com/OpenVisualCloud/SVT-AV1/releases
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
