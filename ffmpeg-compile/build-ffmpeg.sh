@@ -16,9 +16,9 @@ set -euo pipefail
 #
 # Destination folder. Ffmpeg and tools will be in $PREFIX/bin
 #
-PREFIX=$HOME/local
+PREFIX=${PREFIX:-$HOME/local}
 
-sudo=""
+sudo="${SUDO:-}"
 # Uncomment line below if writing to $PREFIX needs sudo
 #sudo=sudo
 
