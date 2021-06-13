@@ -10,5 +10,5 @@
 # then, restart docker:
 #    sudo systemctl restart docker
 
-docker run -e NVIDIA_DRIVER_CAPABILITIES=all --runtime=nvidia --gpus all -it ffmpeg /bin/bash
+docker run --rm -e NVIDIA_DRIVER_CAPABILITIES=all --runtime=nvidia --gpus all -it ffmpeg /bin/bash
 
