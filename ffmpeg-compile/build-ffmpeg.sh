@@ -50,6 +50,10 @@ njobs=$(( $ncores * 3 / 2 )) # 1.5 number of cores
 export MAKEFLAGS="-j$njobs"
 export MAKEOPTS="-j$njobs"
 
+for dep in meson ninja git curl wget cmake; do
+    which $dep || (echo "$dep not found. Please install it following https://github.com/xdrudis/video-scripts/tree/master/.github/workflows"; exit 1)
+done
+
 TMPDIR=$(mktemp -d)
 
 cleanup() {
