@@ -38,7 +38,7 @@ LIBWEBP_VERSION=1.2.0              # https://github.com/webmproject/libwebp/rele
 LIBASS_VERSION=0.15.1              # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=10.0.26.2 # https://github.com/FFmpeg/nv-codec-headers/releases
 LIBDAV1D_VERSION=0.9.0             # https://code.videolan.org/videolan/dav1d/-/releases
-SVT_AV1_VERSION=0.8.6              # https://github.com/OpenVisualCloud/SVT-AV1/releases
+SVT_AV1_VERSION=0.8.7              # https://gitlab.com/AOMediaCodec/SVT-AV1/-/tags
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
@@ -92,7 +92,7 @@ rm -fR "$DIR"
 # SVT-AV1
 #
 DIR=$TMPDIR/svt-av1; mkdir -p "$DIR"; cd "$DIR"
-curl -sL https://github.com/OpenVisualCloud/SVT-AV1/archive/v${SVT_AV1_VERSION}.tar.gz | tar xz --strip-components=1
+curl -sL https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v${SVT_AV1_VERSION}/SVT-AV1-v${SVT_AV1_VERSION}.tar.gz | tar xz --strip-components=1
 mkdir -p Bin/Release
 cd Build/linux
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR="$PREFIX"/lib -DCMAKE_ASM_NASM_COMPILER=nasm ../..
