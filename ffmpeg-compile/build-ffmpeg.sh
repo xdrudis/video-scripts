@@ -27,7 +27,7 @@ FFMPEG_VERSION=4.4                 # https://github.com/FFmpeg/FFmpeg/releases
 FDKAAC_VERSION=2.0.2               # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0              # https://github.com/ultravideo/kvazaar/releases
 LIB_VMAF_VERSION=2.1.1             # https://github.com/Netflix/vmaf/releases
-X264_VERSION=55d517bc              # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
+X264_COMMIT=5db6aa6c               # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
 X265_VERSION=3.4                   # https://github.com/videolan/x265/releases
 NASM_VERSION=2.14.02               # https://www.nasm.us/pub/nasm/releasebuilds
 LIBMP3LAME_VERSION=3.100           # https://sourceforge.net/projects/lame/files/lame/
@@ -39,6 +39,7 @@ LIBASS_VERSION=0.15.1              # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=10.0.26.2 # https://github.com/FFmpeg/nv-codec-headers/releases
 LIBDAV1D_VERSION=0.9.0             # https://code.videolan.org/videolan/dav1d/-/releases
 SVT_AV1_VERSION=0.8.7              # https://gitlab.com/AOMediaCodec/SVT-AV1/-/tags
+VID_STAB_COMMIT=f9166e9            # https://github.com/georgmartius/vid.stab
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
@@ -96,6 +97,16 @@ curl -sL https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v${SVT_AV1_VERSION}/S
 mkdir -p Bin/Release
 cd Build/linux
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR="$PREFIX"/lib -DCMAKE_ASM_NASM_COMPILER=nasm ../..
+make
+$sudo make install
+rm -fR "$DIR"
+
+#
+# vid.stab
+#
+DIR=$TMPDIR/vid.stab; mkdir -p "$DIR"; cd "$DIR"
+curl -sL https://github.com/georgmartius/vid.stab/archive/${VID_STAB_COMMIT}.tar.gz | tar xz --strip-components=1
+cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX
 make
 $sudo make install
 rm -fR "$DIR"
@@ -182,7 +193,7 @@ rm -fR "$DIR"
 # x264
 #
 DIR=$TMPDIR/x264; mkdir -p "$DIR"; cd "$DIR"
-curl -sL https://code.videolan.org/videolan/x264/-/archive/master/x264-${X264_VERSION}.tar.gz | tar xz --strip-components 1
+curl -sL https://code.videolan.org/videolan/x264/-/archive/master/x264-${X264_COMMIT}.tar.gz | tar xz --strip-components 1
 ./configure --prefix="$PREFIX" --enable-static --enable-pic
 make
 $sudo make install-lib-static
@@ -272,6 +283,7 @@ curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --
    --enable-fontconfig \
    --enable-libdav1d \
    --enable-libsvtav1 \
+   --enable-libvidstab \
    --extra-cflags="-I${PREFIX}/include -I${PREFIX}/include/ffnvcodec -I/usr/local/cuda/include/" \
    --extra-ldflags="-L${PREFIX}/lib -L${OPENSSL}/lib -L/usr/local/cuda/lib64" \
    --extra-libs="-ldl -lm" \
