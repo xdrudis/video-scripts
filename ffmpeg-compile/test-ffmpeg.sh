@@ -20,12 +20,6 @@ curl -sLO https://media.xiph.org/video/derf/y4m/akiyo_qcif.y4m
 
 export LD_LIBRARY_PATH=$PREFIX/lib:${LD_LIBRARY_PATH:-}
 
-find $PREFIX -type f -name '*vidstab*'
-
-echo
-printenv
-echo
-
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libx264 -vf "drawtext=text='text test':fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5:x=20:y=20" output-h264.mp4
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libsvtav1 test.ivf
 $PREFIX/bin/ffmpeg -i akiyo_qcif.y4m -c:v libx265 output-h265.mp4
