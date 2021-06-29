@@ -106,7 +106,7 @@ rm -fR "$DIR"
 #
 DIR=$TMPDIR/vid.stab; mkdir -p "$DIR"; cd "$DIR"
 curl -sL https://github.com/georgmartius/vid.stab/archive/${VID_STAB_COMMIT}.tar.gz | tar xz --strip-components=1
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR="$PREFIX"/lib
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR="$PREFIX"/lib -DUSE_OMP=OFF -DBUILD_SHARED_LIBS=OFF .
 make
 $sudo make install
 rm -fR "$DIR"
