@@ -257,7 +257,6 @@ curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --
    --disable-doc \
    --enable-ffplay \
    --enable-shared \
-   --enable-avresample \
    --enable-gpl \
    --enable-libfreetype \
    --enable-libmp3lame \
