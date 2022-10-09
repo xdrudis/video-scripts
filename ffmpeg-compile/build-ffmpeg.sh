@@ -23,7 +23,7 @@ sudo="${SUDO:-}"
 #sudo=sudo
 
 # Software versions
-FFMPEG_VERSION=4.4                 # https://github.com/FFmpeg/FFmpeg/releases
+FFMPEG_VERSION=5.1.2               # https://ffmpeg.org/releases/?C=M;O=D
 FDKAAC_VERSION=2.0.2               # https://github.com/mstorsjo/fdk-aac/releases
 KVAZAAR_VERSION=2.0.0              # https://github.com/ultravideo/kvazaar/releases
 LIB_VMAF_VERSION=2.1.1             # https://github.com/Netflix/vmaf/releases
@@ -37,9 +37,9 @@ LIBVPX_VERSION=1.10.0              # https://github.com/webmproject/libvpx/relea
 LIBWEBP_VERSION=1.2.0              # https://github.com/webmproject/libwebp/releases
 LIBASS_VERSION=0.15.1              # https://github.com/libass/libass/releases
 NV_CODEC_HEADERS_VERSION=10.0.26.2 # https://github.com/FFmpeg/nv-codec-headers/releases
-LIBDAV1D_VERSION=0.9.0             # https://code.videolan.org/videolan/dav1d/-/releases
-SVT_AV1_VERSION=0.8.7              # https://gitlab.com/AOMediaCodec/SVT-AV1/-/tags
-VID_STAB_COMMIT=f9166e9            # https://github.com/georgmartius/vid.stab
+LIBDAV1D_VERSION=0.9.2             # https://code.videolan.org/videolan/dav1d/-/releases
+SVT_AV1_VERSION=1.2.1              # https://gitlab.com/AOMediaCodec/SVT-AV1/-/tags
+VID_STAB_COMMIT=90c76ac            # https://github.com/georgmartius/vid.stab
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:${OPENSSL}/lib/pkgconfig:${PKG_CONFIG_PATH:-} # https://stackoverflow.com/a/29792635
