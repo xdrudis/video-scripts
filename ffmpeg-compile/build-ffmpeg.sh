@@ -23,11 +23,11 @@ sudo="${SUDO:-}"
 #sudo=sudo
 
 # Software versions
-FFMPEG_VERSION=5.1.2               # https://ffmpeg.org/releases/?C=M;O=D
+FFMPEG_VERSION=6.0                 # https://ffmpeg.org/releases/?C=M;O=D
 FDKAAC_VERSION=2.0.2               # https://github.com/mstorsjo/fdk-aac/releases
-KVAZAAR_VERSION=2.0.0              # https://github.com/ultravideo/kvazaar/releases
-LIB_VMAF_VERSION=2.1.1             # https://github.com/Netflix/vmaf/releases
-X264_COMMIT=5db6aa6c               # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
+KVAZAAR_VERSION=2.2.0              # https://github.com/ultravideo/kvazaar/releases
+LIB_VMAF_VERSION=2.3.1             # https://github.com/Netflix/vmaf/releases
+X264_COMMIT=baee400f               # Last commit in https://code.videolan.org/videolan/x264/-/tree/stable
 X265_VERSION=3.4                   # https://github.com/videolan/x265/releases
 NASM_VERSION=2.14.02               # https://www.nasm.us/pub/nasm/releasebuilds
 LIBMP3LAME_VERSION=3.100           # https://sourceforge.net/projects/lame/files/lame/
@@ -36,9 +36,9 @@ OPENJPEG_VERSION=2.4.0             # https://github.com/uclouvain/openjpeg/relea
 LIBVPX_VERSION=1.10.0              # https://github.com/webmproject/libvpx/releases
 LIBWEBP_VERSION=1.2.0              # https://github.com/webmproject/libwebp/releases
 LIBASS_VERSION=0.15.1              # https://github.com/libass/libass/releases
-NV_CODEC_HEADERS_VERSION=10.0.26.2 # https://github.com/FFmpeg/nv-codec-headers/releases
-LIBDAV1D_VERSION=0.9.2             # https://code.videolan.org/videolan/dav1d/-/releases
-SVT_AV1_VERSION=1.2.1              # https://gitlab.com/AOMediaCodec/SVT-AV1/-/tags
+NV_CODEC_HEADERS_VERSION=12.0.16.0 # https://github.com/FFmpeg/nv-codec-headers/releases
+LIBDAV1D_VERSION=1.2.1             # https://code.videolan.org/videolan/dav1d/-/releases
+SVT_AV1_VERSION=1.7.0              # https://gitlab.com/AOMediaCodec/SVT-AV1/-/tags
 VID_STAB_COMMIT=90c76ac            # https://github.com/georgmartius/vid.stab
 
 OPENSSL=/usr/local/opt/openssl@1.1 # Needed for Mac OSX. No-op for the rest
@@ -258,6 +258,7 @@ curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar xz --
    --enable-ffplay \
    --enable-shared \
    --enable-gpl \
+   --ld="g++" \
    --enable-libfreetype \
    --enable-libmp3lame \
    --enable-libopenjpeg \
