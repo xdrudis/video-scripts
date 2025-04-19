@@ -64,3 +64,24 @@ google-chrome --disable-web-security --user-data-dir="/tmp/chrome_dev_test"
 - **Video Won't Play**: Check console errors, verify manifest validity
 - **CORS Issues**: Ensure Chrome was launched with security flags
 - **Format Detection**: Use proper file extensions (.m3u8 for HLS, .mpd for DASH)
+
+
+## CMAF packaging
+Not necessary for the above. I just want a good place to keep this.
+
+```
+ffmpeg -i master.m3u8 \
+    -c:v copy -bsf:a aac_adtstoasc \
+    -f mp4 -movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov -y cmaf_output.fmp4
+
+docker run --platform linux/amd64 --rm -w /root --entrypoint /bin/sh -v $PWD:/root google/shaka-packager -c \
+  'mkdir -p tmp ;
+  TMPDIR=tmp packager \
+  in=cmaf_output.fmp4,stream=audio,output=audio.mp4,playlist_name=audio.m3u8,hls_group_id=audio,hls_name=ENGLISH \
+  in=cmaf_output.fmp4,stream=video,output=video.mp4,playlist_name=video.m3u8 \
+  --segment_duration 2 \
+  --hls_start_time_offset 0 \
+  --hls_master_playlist_output master.m3u8 \
+  --mpd_output manifest.mpd ;
+rm -fR ./tmp'
+```
