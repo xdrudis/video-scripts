@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Streaming Video Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: #fff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            color: #333;
+        }
+        
+        
+        .player-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            max-width: 100%;
+            background-color: #000;
+        }
+        
+        #video-player {
+            width: 100%;
+            height: 90vh;
+            max-height: 1200px;
+            background-color: #000;
+        }
+        
+        .info-panel {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-loading {
+            background-color: #FFF9C4;
+            color: #FFA000;
+        }
+        
+        .status-playing {
+            background-color: #C8E6C9;
+            color: #388E3C;
+        }
+        
+        .status-error {
+            background-color: #FFCDD2;
+            color: #D32F2F;
+        }
+        
+        #debug-info {
+            font-family: monospace;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            display: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .debug-toggle {
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .url-input {
+            display: flex;
+            margin: 10px 0;
+            gap: 10px;
+        }
+        
+        .url-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .url-input button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .url-input button:hover {
+            background-color: #45a049;
+        }
+        
+        .stream-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 10px;
+            background-color: #E1F5FE;
+            color: #0288D1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Adaptive Streaming Video Player</h1>
+    </header>
+    
+    <div class="info-panel">
+        <div class="url-input">
+            <input type="text" id="video-url" placeholder="Enter HLS (.m3u8) or DASH (.mpd) URL" value="http://localhost:8000/manifest.mpd#t=60">
+            <button onclick="loadVideo()">Load Video</button>
+        </div>
+        <p>
+            <strong>Source:</strong> <span id="current-url">No video loaded yet</span>
+            <span id="stream-type" class="stream-type">—</span>
+            <span id="status-indicator" class="status status-loading">Ready</span>
+        </p>
+    </div>
+    
+    <div class="player-container">
+        <video id="video-player" controls></video>
+    </div>
+    
+    <div class="info-panel">
+        <div>
+            <span class="debug-toggle" onclick="toggleDebug()">Show debug info</span>
+            <div id="debug-info"></div>
+        </div>
+    </div>
+
+    <!-- Load required libraries (will be loaded dynamically based on stream type) -->
+    <script>
+        // Get elements
+        const video = document.getElementById('video-player');
+        const statusIndicator = document.getElementById('status-indicator');
+        const debugInfo = document.getElementById('debug-info');
+        const videoUrlInput = document.getElementById('video-url');
+        const currentUrlDisplay = document.getElementById('current-url');
+        const streamTypeDisplay = document.getElementById('stream-type');
+        
+        // Track current player instance
+        let currentPlayer = null;
+        let playerType = null;
+        
+        // Helper to log with timestamp
+        function logWithTime(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            console.log(`[${timestamp}] ${message}`);
+            
+            // Add to debug info
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            debugInfo.appendChild(logEntry);
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
+        
+        // Toggle debug info display
+        function toggleDebug() {
+            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Add event listener for debug toggle when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const debugToggle = document.querySelector('.debug-toggle');
+            debugToggle.addEventListener('click', toggleDebug);
+        });
+        
+        // Update status display
+        function updateStatus(status, isError = false) {
+            statusIndicator.textContent = status;
+            statusIndicator.className = `status status-${isError ? 'error' : (status.toLowerCase() === 'loading' ? 'loading' : 'playing')}`;
+        }
+        
+        // Load required library based on stream type
+        function loadLibrary(url) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = url;
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error(`Failed to load library: ${url}`));
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Detect stream type from URL
+        function detectStreamType(url) {
+            if (url.includes('.mpd')) {
+                return 'dash';
+            } else if (url.includes('.m3u8')) {
+                return 'hls';
+            } else {
+                // Default to HLS if unknown
+                logWithTime('Unknown file extension, defaulting to HLS');
+                return 'hls';
+            }
+        }
+        
+        // Destroy current player if exists
+        function destroyCurrentPlayer() {
+            if (currentPlayer) {
+                logWithTime(`Destroying current ${playerType} player`);
+                
+                if (playerType === 'hls') {
+                    currentPlayer.destroy();
+                } else if (playerType === 'dash') {
+                    currentPlayer.reset();
+                }
+                
+                currentPlayer = null;
+                playerType = null;
+                
+                // Reset video source
+                video.removeAttribute('src');
+                video.load();
+            }
+        }
+        
+        // Initialize HLS player
+        async function initHLSPlayer(videoSrc) {
+            logWithTime('Initializing HLS player...');
+            streamTypeDisplay.textContent = 'HLS';
+            
+            // Load HLS.js library if not already loaded
+            if (typeof Hls === 'undefined') {
+                try {
+                    await loadLibrary('https://cdn.jsdelivr.net/npm/hls.js@latest');
+                    logWithTime('HLS.js library loaded');
+                } catch (error) {
+                    logWithTime('Failed to load HLS.js library');
+                    updateStatus('Library Error', true);
+                    return;
+                }
+            }
+            
+            if (Hls.isSupported()) {
+                logWithTime('HLS.js is supported');
+                
+                const hls = new Hls({
+                    debug: true,
+                    enableWebVTT: true,
+                    enableCEA708Captions: true,
+                    xhrSetup: function(xhr, url) {
+                        xhr.withCredentials = false;
+                        logWithTime(`Loading URL: ${url}`);
+                    }
+                });
+                
+                // Store current player instance
+                currentPlayer = hls;
+                playerType = 'hls';
+                
+                // Bind HLS to video element
+                hls.attachMedia(video);
+                
+                // Event listeners
+                hls.on(Hls.Events.MEDIA_ATTACHED, function() {
+                    logWithTime('HLS media attached');
+                    logWithTime('Loading source: ' + videoSrc);
+                    hls.loadSource(videoSrc);
+                });
+                
+                hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+                    logWithTime(`Manifest parsed, found ${data.levels.length} quality levels`);
+                    updateStatus('Ready');
+                    
+                    // Check for subtitles in the manifest
+                    if (data.subtitles && data.subtitles.length > 0) {
+                        logWithTime(`Found ${data.subtitles.length} subtitle tracks`);
+                    }
+                    
+                    // Enable subtitle tracks (after a short delay)
+                    setTimeout(() => {
+                        const tracks = video.textTracks;
+                        logWithTime(`Found ${tracks.length} text tracks`);
+                        
+                        for (let i = 0; i < tracks.length; i++) {
+                            logWithTime(`Track ${i}: ${tracks[i].kind} - ${tracks[i].label || 'Unnamed'}`);
+                            
+                            if (tracks[i].kind === 'subtitles' || tracks[i].kind === 'captions') {
+                                tracks[i].mode = 'showing';
+                                logWithTime(`Enabled track: ${tracks[i].label || 'Unnamed'}`);
+                            }
+                        }
+                    }, 2000);
+                });
+                
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        logWithTime(`Fatal error: ${data.details}`);
+                        
+                        switch(data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                logWithTime('Network error, trying to recover...');
+                                updateStatus('Network Error', true);
+                                hls.startLoad();
+                                break;
+                                
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                logWithTime('Media error, trying to recover...');
+                                updateStatus('Media Error', true);
+                                hls.recoverMediaError();
+                                break;
+                                
+                            default:
+                                logWithTime('Unrecoverable error');
+                                updateStatus('Error', true);
+                                hls.destroy();
+                                break;
+                        }
+                    } else {
+                        logWithTime(`Non-fatal error: ${data.details}`);
+                    }
+                });
+                
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native HLS support
+                logWithTime('Using native HLS support');
+                playerType = 'native';
+                video.src = videoSrc;
+                
+                video.addEventListener('loadedmetadata', () => {
+                    updateStatus('Ready');
+                    logWithTime('Video metadata loaded');
+                });
+                
+            } else {
+                // HLS not supported
+                updateStatus('Not Supported', true);
+                logWithTime('HLS not supported in this browser');
+            }
+        }
+        
+        // Initialize DASH player
+        async function initDASHPlayer(videoSrc) {
+            logWithTime('Initializing DASH player...');
+            streamTypeDisplay.textContent = 'DASH';
+            
+            // Load dash.js library if not already loaded
+            if (typeof dashjs === 'undefined') {
+                try {
+                    await loadLibrary('https://cdn.dashjs.org/latest/dash.all.min.js');
+                    logWithTime('dash.js library loaded');
+                } catch (error) {
+                    logWithTime('Failed to load dash.js library');
+                    updateStatus('Library Error', true);
+                    return;
+                }
+            }
+            
+            try {
+                // Create dash.js player
+                const dashPlayer = dashjs.MediaPlayer().create();
+                
+                // Store current player instance
+                currentPlayer = dashPlayer;
+                playerType = 'dash';
+                
+                // Initialize player
+                dashPlayer.initialize(video, videoSrc, true);
+                dashPlayer.updateSettings({
+                    debug: {
+                        logLevel: dashjs.Debug.LOG_LEVEL_INFO
+                    },
+                    streaming: {
+                        abr: {
+                            autoSwitchBitrate: {
+                                audio: true,
+                                video: true
+                            }
+                        },
+                        text: {
+                            defaultEnabled: true
+                        }
+                    }
+                });
+                
+                // Setup event listeners
+                dashPlayer.on(dashjs.MediaPlayer.events.ERROR, function(error) {
+                    logWithTime(`DASH error: ${error.error.message}`);
+                    updateStatus('Error', true);
+                });
+                
+                dashPlayer.on(dashjs.MediaPlayer.events.MANIFEST_LOADED, function() {
+                    logWithTime('DASH manifest loaded');
+                    updateStatus('Ready');
+                    
+                    // Log available text tracks
+                    const tracks = dashPlayer.getTracksFor('text');
+                    if (tracks && tracks.length > 0) {
+                        logWithTime(`Found ${tracks.length} text tracks`);
+                        for (let i = 0; i < tracks.length; i++) {
+                            logWithTime(`Track ${i}: ${tracks[i].lang || 'Unknown language'}`);
+                        }
+                    }
+                });
+                
+                dashPlayer.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, function(e) {
+                    if (e.mediaType === 'video') {
+                        try {
+                            // Check for proper API methods - dashjs API changed across versions
+                            if (dashPlayer.getBitrateInfoListFor) {
+                                const qualities = dashPlayer.getBitrateInfoListFor('video');
+                                if (qualities && Array.isArray(qualities) && e.newQuality !== undefined) {
+                                    const bitrate = Math.round(qualities[e.newQuality].bitrate / 1000);
+                                    logWithTime(`Video quality changed to ${bitrate} kbps`);
+                                } else {
+                                    // Just log that quality changed without specific index
+                                    logWithTime(`Video quality changed`);
+                                }
+                            } else {
+                                // Fallback for newer versions
+                                logWithTime(`Video quality changed`);
+                            }
+                        } catch (error) {
+                            logWithTime(`Could not get bitrate info: ${error.message}`);
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                logWithTime(`Error initializing DASH player: ${error.message}`);
+                updateStatus('Error', true);
+            }
+        }
+        
+        // Handle video events
+        function setupVideoEventListeners() {
+            video.addEventListener('play', () => {
+                updateStatus('Playing');
+                logWithTime('Video playing');
+            });
+            
+            video.addEventListener('pause', () => {
+                updateStatus('Paused');
+                logWithTime('Video paused');
+            });
+            
+            video.addEventListener('error', (e) => {
+                updateStatus('Video Error', true);
+                logWithTime(`Video error: ${video.error?.message || 'Unknown error'}`);
+            });
+            
+            video.addEventListener('ended', () => {
+                updateStatus('Ended');
+                logWithTime('Video ended');
+            });
+        }
+        
+        // Load video from URL input
+        function loadVideo() {
+            const videoSrc = videoUrlInput.value.trim();
+            
+            if (!videoSrc) {
+                alert('Please enter a valid URL');
+                return;
+            }
+            
+            // Update display
+            currentUrlDisplay.textContent = videoSrc;
+            updateStatus('Loading');
+            
+            // Clean up existing player
+            destroyCurrentPlayer();
+            
+            // Determine stream type and initialize appropriate player
+            const streamType = detectStreamType(videoSrc);
+            
+            if (streamType === 'dash') {
+                initDASHPlayer(videoSrc);
+            } else {
+                initHLSPlayer(videoSrc);
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setupVideoEventListeners();
+            logWithTime('Player initialized. Press "Load Video" to start streaming.');
+        });
+    </script>
+</body>
+</html>
