@@ -11,6 +11,12 @@ typedef struct {
     int decoded_frames;
 } ByteCounterContext;
 
+typedef struct {
+    int64_t pos;      // Position in the file where packet starts (optional)
+    int size;         // Size of the packet (optional)
+    int64_t bytes_needed; // Total bytes read until this frame was decoded
+} FrameData;
+
 // Custom IO read callback
 static int read_packet_callback(void *opaque, uint8_t *buf, int buf_size) {
     void **data = (void **)opaque;
@@ -104,7 +110,7 @@ int main(int argc, char *argv[]) {
     int video_stream_idx = -1;
     AVCodecContext *video_codec_ctx = NULL;
     const AVCodec *video_codec = NULL;
-    int64_t *frame_bytes = NULL; 
+    FrameData *frame_data = NULL;
 
     for (int i = 0; i < fmt_ctx->nb_streams; i++) {
         if (fmt_ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
@@ -148,9 +154,9 @@ int main(int argc, char *argv[]) {
         goto cleanup;
     }
 
-    frame_bytes = calloc(target_frame_count, sizeof(int64_t));
-    if (!frame_bytes) {
-        fprintf(stderr, "Error: Could not allocate memory for frame bytes\n");
+    frame_data = calloc(target_frame_count, sizeof(FrameData));
+    if (!frame_data) {
+        fprintf(stderr, "Error: Could not allocate memory for frame data\n");
         goto cleanup;
     }
 
@@ -158,7 +164,7 @@ int main(int argc, char *argv[]) {
 
     while (av_read_frame(fmt_ctx, packet) >= 0) {
         if (packet->stream_index == video_stream_idx) {
-            int64_t offset_before = avio_tell(fmt_ctx->pb); // Save offset before decoding
+            int64_t last_valid_pos = avio_tell(fmt_ctx->pb); // Save offset before decoding
 
             int ret = avcodec_send_packet(video_codec_ctx, packet);
             if (ret < 0) {
@@ -179,7 +185,9 @@ int main(int argc, char *argv[]) {
                 frames_decoded++;
 
                 if (frames_decoded <= target_frame_count) {
-                    frame_bytes[frames_decoded - 1] = offset_before;
+                    frame_data[frames_decoded - 1].pos = last_valid_pos;
+                    frame_data[frames_decoded - 1].size = packet->size;
+                    frame_data[frames_decoded - 1].bytes_needed = counter_ctx.bytes_read;
                 }
 
                 if (frames_decoded >= target_frame_count) {
@@ -203,7 +211,9 @@ int main(int argc, char *argv[]) {
         while ((ret = avcodec_receive_frame(video_codec_ctx, frame)) >= 0) {
             frames_decoded++;
             if (frames_decoded <= target_frame_count) {
-                frame_bytes[frames_decoded - 1] = avio_tell(fmt_ctx->pb); // fallback
+                frame_data[frames_decoded - 1].pos = -1;
+                frame_data[frames_decoded - 1].size = 0;
+                frame_data[frames_decoded - 1].bytes_needed = counter_ctx.bytes_read;
             }
 
             if (frames_decoded >= target_frame_count) {
@@ -214,8 +224,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    printf("Frame,Position,Size,CumulativeBytesNeeded\n");
     for (int i = 0; i < frames_decoded && i < target_frame_count; i++) {
-        printf("%lld\n", (long long)frame_bytes[i]);
+        printf("%d,%lld,%d,%lld\n", i + 1,
+               (long long)frame_data[i].pos,
+               frame_data[i].size,
+               (long long)frame_data[i].bytes_needed);
     }
 
     if (frames_decoded < target_frame_count) {
@@ -225,7 +239,7 @@ int main(int argc, char *argv[]) {
 
 cleanup:
     // Free allocated memory
-    if (frame_bytes) free(frame_bytes);
+    if (frame_data) free(frame_data);
     av_frame_free(&frame);
     av_packet_free(&packet);
     if (video_codec_ctx) avcodec_free_context(&video_codec_ctx);
