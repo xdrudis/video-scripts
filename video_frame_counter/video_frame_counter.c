@@ -79,8 +79,11 @@ int main(int argc, char *argv[]) {
     }
 
     fmt_ctx->pb = avio_ctx;
+    AVDictionary *options = NULL;
+    av_dict_set(&options, "analyzeduration", "10000000", 0);
+    av_dict_set(&options, "probesize", "5000000", 0);
 
-    if (avformat_open_input(&fmt_ctx, NULL, NULL, NULL) < 0) {
+    if (avformat_open_input(&fmt_ctx, NULL, NULL, &options) < 0) {
         fprintf(stderr, "Error: Could not open input\n");
         avformat_free_context(fmt_ctx);
         av_free(avio_ctx_buffer);
